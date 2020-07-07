@@ -62,9 +62,17 @@ DOWNLOAD_DELAY = 1
 
 # Enable or disable downloader middlewares
 # See https://docs.scrapy.org/en/latest/topics/downloader-middleware.html
-#DOWNLOADER_MIDDLEWARES = {
-#    'movies.middlewares.MoviesDownloaderMiddleware': 543,
-#}
+DOWNLOADER_MIDDLEWARES = {
+   'movies.middlewares.MoviesDownloaderMiddleware': 543,
+   'movies.middlewares.RandomHttpProxyMiddleware': 400,
+}
+
+HTTP_PROXY_LIST = [
+     'http://101.200.127.149:3129',
+     'http://101.231.104.82:80',
+     'http://101.37.118.54:8888',
+     'http://101.4.136.34:81',
+]
 
 # Enable or disable extensions
 # See https://docs.scrapy.org/en/latest/topics/extensions.html

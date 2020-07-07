@@ -22,31 +22,33 @@ class MySQLPipeline(object):
         self.db_conn =pymysql.connect(host=host, port=port, db=db, user=user, passwd=passwd, charset='utf8')
         self.db_cur = self.db_conn.cursor()
 
-    # 关闭数据库
-    def close_spider(self, spider):
-        self.db_conn.commit()
-        self.db_conn.close()
-
     # 对数据进行处理
     def process_item(self, item, spider):
         self.insert_db(item)
         return item
 
+    # 关闭数据库
+    def close_spider(self, spider):
+        self.db_conn.commit()
+        self.db_conn.close()
+
+    
     #插入数据
     def insert_db(self, item):
-        values = (
+        keys = (
             item['name'],
             item['score'],
             item['description'],
             item['releasetime'],
         )
+        print(keys)
         try:
-            sql = 'INSERT INTO moviesinfo VALUES(%s,%s,%s,%s)'
-            self.db_cur.execute(sql, values)
+            sql = 'INSERT INTO moviesinfo (name, score, description, releasetime) VALUES (%s,%s,%s,%s)'        
+            self.db_cur.execute(sql, keys)
             self.db_conn.commit()
             print("Insert finished")
         except:
-            print("Insert to DB failed")
+            print('Insert failed')
             self.db_conn.commit()
             self.db_conn.close()   
 

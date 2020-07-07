@@ -16,6 +16,7 @@ class MoviesItem(scrapy.Item):
     releasetime = scrapy.Field()
     #电影评分
     score = scrapy.Field()
+    
 
 
     

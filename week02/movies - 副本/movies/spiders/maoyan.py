@@ -1,6 +1,7 @@
 import scrapy
 from movies.items import MoviesItem
 from scrapy.selector import Selector
+import time
 
 
 class MaoyanSpider(scrapy.Spider):
@@ -21,10 +22,11 @@ class MaoyanSpider(scrapy.Spider):
             # url 请求访问的网址
             # callback 回调函数，引擎回将下载好的页面(Response对象)发给该方法，执行数据解析
             # 这里可以使用callback指定新的函数，不是用parse作为默认的回调参数
-
+    
+    time.sleep(5)
     # 解析函数
     def parse(self, response):
-        print(response.url)
+        #print(response.url)
         tags = Selector(response=response).xpath('//dd')
         for tag in tags:
             item = MoviesItem()
@@ -32,17 +34,21 @@ class MaoyanSpider(scrapy.Spider):
             link = 'http://maoyan.com'+tag.css('a::attr(href)').extract_first()
             releasetime = tag.css('.releasetime::text').extract_first().strip()
             score = tag.css('i.integer::text').extract_first().strip()
-            score += tag.css('i.fraction::text').extract_first().strip()        
+            score += tag.css('i.fraction::text').extract_first().strip()       
             item['name'] = name
             item['releasetime'] = releasetime
             item['score'] = score
+            #print('zheshi',link)
             yield scrapy.Request(url=link, meta={'item': item}, callback=self.parse2)
-
+    
+    #print('时间停留')
+    time.sleep(5)
     def parse2(self, response):
         item =response.meta['item']
-        print('response.url')
-        description = Selector(response=response).css('a.text-link::text').extract()
+        description1 = Selector(response=response).css('a.text-link::text').extract()
+        #类型转换，list转换成str，方便存储到数据库（list中超过一个值就会报错）
+        description = ",".join(description1)
         item['description'] = description
-        #print(description)
+        #print('zheshiyigemiaoshu', description)
         yield item
      
